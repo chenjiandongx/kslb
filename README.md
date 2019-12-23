@@ -15,8 +15,8 @@ kslb 是利用 Nginx 实现的基于 L4 做负载转发的服务组件，可以�
 #### 优点
 
 * 轻便，性能强，Nginx 本身是一个无状态应用，支持水平扩展。
-* 对后端具体示例无感知，后端版本或是权重变动不会影响前端入口。
-* 配置热更。
+* 对后端无感知，后端版本或是权重变动不会影响前端入口。
+* Nginx 配置热更。
 
 #### 缺点
 
@@ -87,6 +87,7 @@ spec:
           configMap:
             name: myapp-nginx-config
 ---
+# configMap 是定义转发规则的配置文件
 apiVersion: v1
 kind: ConfigMap
 metadata:
