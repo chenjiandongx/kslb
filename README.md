@@ -59,7 +59,7 @@ appv3-svc                   ClusterIP   10.102.93.135    <none>        8080/TCP 
 ```
 
 部署 kslb
-```
+```yaml
 # example/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
