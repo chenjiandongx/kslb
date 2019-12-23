@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kslb
+spec:
+  selector:
+    matchLabels:
+      name: kslb
+  template:
+    metadata:
+      labels:
+        name: kslb
+    spec:
+      containers:
+        - name: kslb
+          image: chenjiandongx/kslb:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: myapp-nginx-config
+              mountPath: /etc/kslb
+      volumes:
+        - name: myapp-nginx-config
+          configMap:
+            name: myapp-nginx-config
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp-nginx-config
+data:
+  svc.yaml: |
+    ports:
+    - 8080
+    servers:
+    - host: appv1-svc.default
+      weight: 1
+    - host: appv2-svc.default
+      weight: 2
+    - host: appv2-svc.default
+      weight: 3
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-svc
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    name: kslb
+  type: ClusterIP

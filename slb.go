@@ -15,10 +15,10 @@ import (
 
 const (
 	defaultNgxConfFile = "/etc/nginx/nginx.conf"
-	defaultSvcConfFile = "/etc/kubeslb/svc.yaml"
-	defaultTmpl = `
+	defaultSvcConfFile = "/etc/kslb/svc.yaml"
+	defaultTmpl        = `
 stream {
-{{- range $index, $port := .ports }}
+{{- range $index, $port := .Ports }}
 	server {
 		listen 0.0.0.0:{{ $port }};
 		proxy_pass server_{{ $index }};
@@ -27,10 +27,10 @@ stream {
 
 {{ $parent := . }}
 
-{{- range $index, $port := .ports }}
+{{- range $index, $port := .Ports }}
 	upstream server_{{ $index }} {
-		{{- range $parent.servers }}
-		server {{ .host }}:{{ $port }} weight={{ .weight }};
+		{{- range $parent.Servers }}
+		server {{ .Host }}:{{ $port }} weight={{ .Weight }};
 		{{- end }}
 	}
 {{- end }}
@@ -38,17 +38,17 @@ stream {
 )
 
 type backendServer struct {
-	host   string `yaml:"host"`
-	weight int    `yaml:"weight"`
+	Host   string `yaml:"host"`
+	Weight int    `yaml:"weight"`
 }
 
-type backend struct {
-	ports   []int           `yaml:"ports"`
-	servers []backendServer `yaml:"servers"`
+type Backend struct {
+	Ports   []int           `yaml:"ports"`
+	Servers []backendServer `yaml:"servers"`
 }
 
 type SLB struct {
-	backend
+	*Backend
 	*SLBOpts
 }
 
@@ -144,11 +144,11 @@ func (s *SLB) watchConf() {
 
 func (s *SLB) readConf() {
 	content := s.getFileContent(s.SvcCfg)
-	bk := &backend{}
+	bk := &Backend{}
 	if err := yaml.Unmarshal([]byte(content), bk); err != nil {
 		logrus.Fatalf("yaml.Unmarshal error: %+v", err)
 	}
-	s.backend = *bk
+	s.Backend = bk
 }
 
 func (s *SLB) updateConf() {
@@ -165,7 +165,7 @@ func (s *SLB) updateConf() {
 		logrus.Fatalf("create file [%s] error: %+v", s.NgxCfg, err)
 	}
 
-	if err = tmpl.Execute(f, s.backend); err != nil {
+	if err = tmpl.Execute(f, s.Backend); err != nil {
 		logrus.Fatalf("tmpl exec error: %+v", err)
 	}
 }

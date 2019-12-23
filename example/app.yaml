@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appv1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: appv1
+  template:
+    metadata:
+      labels:
+        run: appv1
+    spec:
+      containers:
+        - image: chenjiandongx/appv1:latest
+          imagePullPolicy: IfNotPresent
+          name: appv1
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appv2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: appv2
+  template:
+    metadata:
+      labels:
+        run: appv2
+    spec:
+      containers:
+        - image: chenjiandongx/appv2:latest
+          imagePullPolicy: IfNotPresent
+          name: appv2
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appv3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: appv3
+  template:
+    metadata:
+      labels:
+        run: appv3
+    spec:
+      containers:
+        - image: chenjiandongx/appv3:latest
+          imagePullPolicy: IfNotPresent
+          name: appv3
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: appv1-svc
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    run: appv1
+  type: ClusterIP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: appv2-svc
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    run: appv2
+  type: ClusterIP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: appv3-svc
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    run: appv3
+  type: ClusterIP
