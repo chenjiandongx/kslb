@@ -1,0 +1,11 @@
+ports:
+  - 3000
+  - 4000
+  - 5000
+servers:
+  - host: svc1
+    weight: 10
+  - host: svc2
+    weight: 20
+  - host: svc3
+    weight: 30

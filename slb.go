@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	defaultNgxExecPath = "/usr/sbin/nginx"
 	defaultNgxConfFile = "/etc/nginx/nginx.conf"
 	defaultSvcConfFile = "/etc/kslb/svc.yaml"
 	defaultTmpl        = `
@@ -93,14 +94,14 @@ func (s *SLB) getFileContent(path string) string {
 }
 
 func (s *SLB) start() {
-	process := exec.Command("/usr/sbin/nginx", "-g", "daemon on;")
+	process := exec.Command(defaultNgxExecPath, "-g", "daemon on;")
 	if err := process.Start(); err != nil {
 		logrus.Fatalf("start nginx error: %+v", err)
 	}
 }
 
 func (s *SLB) reload() {
-	process := exec.Command("/usr/sbin/nginx", "-s", "reload")
+	process := exec.Command(defaultNgxExecPath, "-s", "reload")
 	if err := process.Start(); err != nil {
 		logrus.Fatalf("reload nginx error: %+v", err)
 	}
